@@ -75,6 +75,81 @@ class TheServer {
     });
   }
 
+  complete_task(task_id, user_id) {
+    $.ajax("/api/v1/complete_task", {
+      method: "post",
+      dataType: "json",
+      contentType: "application/json; charset=UTF-8",
+      data: JSON.stringify({task_id: task_id, user_id: user_id}),
+      success: (resp) => {
+        store.dispatch({
+          type: 'TASKS_LIST',
+          tasks: resp.data,
+        });
+      },
+    });
+  }
+
+  add_time(task_id, user_id, time) {
+    $.ajax("/api/v1/add_time", {
+      method: "post",
+      dataType: "json",
+      contentType: "application/json; charset=UTF-8",
+      data: JSON.stringify({task_id: task_id, user_id: user_id, time: time}),
+      success: (resp) => {
+        store.dispatch({
+          type: 'TASKS_LIST',
+          tasks: resp.data,
+        });
+      },
+    });
+  }
+
+  assign_task(task_id, current_user_id, assign_user_id) {
+    $.ajax("/api/v1/assign_task", {
+      method: "post",
+      dataType: "json",
+      contentType: "application/json; charset=UTF-8",
+      data: JSON.stringify({task_id: task_id, current_user_id: current_user_id, assign_user_id: assign_user_id}),
+      success: (resp) => {
+        store.dispatch({
+          type: 'TASKS_LIST',
+          tasks: resp.data,
+        });
+      },
+    });
+  }
+
+  create_new_task(user_id,title,descrip){
+    $.ajax("/api/v1/create_new_task", {
+      method: "post",
+      dataType: "json",
+      contentType: "application/json; charset=UTF-8",
+      data: JSON.stringify({user_id: user_id, title: title, descrip: descrip}),
+      success: (resp) => {
+        store.dispatch({
+          type: 'TASKS_LIST',
+          tasks: resp.data,
+        });
+      },
+    });
+  }
+
+  edit_task(user_id,task_id,title,descrip){
+    $.ajax("/api/v1/edit_task", {
+      method: "post",
+      dataType: "json",
+      contentType: "application/json; charset=UTF-8",
+      data: JSON.stringify({user_id: user_id, task_id: task_id, title: title, descrip: descrip}),
+      success: (resp) => {
+        store.dispatch({
+          type: 'TASKS_LIST',
+          tasks: resp.data,
+        });
+      },
+    });
+  }
+
 
 }
 

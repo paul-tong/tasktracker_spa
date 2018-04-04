@@ -23,6 +23,39 @@ defmodule TasktrackerSpa.Tasks do
  	Repo.all(from t in Task, where: t.user_id_assign == ^id and t.isCompleted == true)
   end
 
+ 
+  # Complete the given task
+  def complete_task(id) do
+    task = get_task!(id)
+    attrs = %{isCompleted: true}
+    update_task(task, attrs)
+  end
+
+  # add time to a task
+  def add_time(task_id, time) do
+    task = get_task!(task_id)
+    time_int = String.to_integer(time)
+    old_time = task.time
+    new_time = time_int + old_time
+    attrs = %{time: new_time}
+    update_task(task, attrs)
+  end
+
+  # assign task to a user
+  def assign_task(task_id, user_id) do
+    task = get_task!(task_id)
+    attrs = %{user_id_assign: user_id}
+    update_task(task, attrs)
+  end
+
+  # edit task title and descrip
+  def edit_task(task_id, title, descrip) do
+    task = get_task!(task_id)
+    attrs = %{title: title, descrip: descrip}
+    update_task(task, attrs)
+  end
+
+
   @doc """
   Returns the list of tasks.
 

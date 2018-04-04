@@ -48524,6 +48524,86 @@ var TheServer = function () {
         }
       });
     }
+  }, {
+    key: "complete_task",
+    value: function complete_task(task_id, user_id) {
+      $.ajax("/api/v1/complete_task", {
+        method: "post",
+        dataType: "json",
+        contentType: "application/json; charset=UTF-8",
+        data: JSON.stringify({ task_id: task_id, user_id: user_id }),
+        success: function success(resp) {
+          _store2.default.dispatch({
+            type: 'TASKS_LIST',
+            tasks: resp.data
+          });
+        }
+      });
+    }
+  }, {
+    key: "add_time",
+    value: function add_time(task_id, user_id, time) {
+      $.ajax("/api/v1/add_time", {
+        method: "post",
+        dataType: "json",
+        contentType: "application/json; charset=UTF-8",
+        data: JSON.stringify({ task_id: task_id, user_id: user_id, time: time }),
+        success: function success(resp) {
+          _store2.default.dispatch({
+            type: 'TASKS_LIST',
+            tasks: resp.data
+          });
+        }
+      });
+    }
+  }, {
+    key: "assign_task",
+    value: function assign_task(task_id, current_user_id, assign_user_id) {
+      $.ajax("/api/v1/assign_task", {
+        method: "post",
+        dataType: "json",
+        contentType: "application/json; charset=UTF-8",
+        data: JSON.stringify({ task_id: task_id, current_user_id: current_user_id, assign_user_id: assign_user_id }),
+        success: function success(resp) {
+          _store2.default.dispatch({
+            type: 'TASKS_LIST',
+            tasks: resp.data
+          });
+        }
+      });
+    }
+  }, {
+    key: "create_new_task",
+    value: function create_new_task(user_id, title, descrip) {
+      $.ajax("/api/v1/create_new_task", {
+        method: "post",
+        dataType: "json",
+        contentType: "application/json; charset=UTF-8",
+        data: JSON.stringify({ user_id: user_id, title: title, descrip: descrip }),
+        success: function success(resp) {
+          _store2.default.dispatch({
+            type: 'TASKS_LIST',
+            tasks: resp.data
+          });
+        }
+      });
+    }
+  }, {
+    key: "edit_task",
+    value: function edit_task(user_id, task_id, title, descrip) {
+      $.ajax("/api/v1/edit_task", {
+        method: "post",
+        dataType: "json",
+        contentType: "application/json; charset=UTF-8",
+        data: JSON.stringify({ user_id: user_id, task_id: task_id, title: title, descrip: descrip }),
+        success: function success(resp) {
+          _store2.default.dispatch({
+            type: 'TASKS_LIST',
+            tasks: resp.data
+          });
+        }
+      });
+    }
   }]);
 
   return TheServer;
@@ -48578,6 +48658,254 @@ $(function () {
 // paths "./socket" or full ones "web/static/js/socket".
 
 // import socket from "./socket"
+
+});
+
+;require.register("js/cs/task_assign.jsx", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = TaskAssign;
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouterDom = require('react-router-dom');
+
+var _reactstrap = require('reactstrap');
+
+var _api = require('../api');
+
+var _api2 = _interopRequireDefault(_api);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function TaskAssign(props) {
+  console.log("In Users:");
+  console.log(props.users);
+  var usersList = props.users.map(function (user) {
+    return _react2.default.createElement(
+      'tr',
+      null,
+      _react2.default.createElement(
+        'td',
+        null,
+        user.id
+      ),
+      _react2.default.createElement(
+        'td',
+        null,
+        user.name
+      ),
+      _react2.default.createElement(
+        'td',
+        null,
+        _react2.default.createElement(
+          _reactRouterDom.Link,
+          { to: "/tasks_unassigned", className: 'btn btn-primary', onClick: function onClick() {
+              return assignTask(user.id);
+            } },
+          'assign'
+        )
+      )
+    );
+  });
+  return _react2.default.createElement(
+    'div',
+    null,
+    _react2.default.createElement(
+      _reactstrap.Alert,
+      { color: 'primary' },
+      'Assign task to user!'
+    ),
+    _react2.default.createElement(
+      _reactstrap.Table,
+      null,
+      _react2.default.createElement(
+        'thead',
+        null,
+        _react2.default.createElement(
+          'tr',
+          null,
+          _react2.default.createElement(
+            'th',
+            null,
+            'Id'
+          ),
+          _react2.default.createElement(
+            'th',
+            null,
+            'Name'
+          ),
+          _react2.default.createElement(
+            'th',
+            null,
+            'Assign'
+          )
+        )
+      ),
+      _react2.default.createElement(
+        'tbody',
+        null,
+        usersList
+      )
+    )
+  );
+}
+
+function assignTask(user_id) {
+  console.log("assign task");
+  var current_user_id = document.getElementById("userid").innerText;
+  var assign_user_id = user_id;
+  var task_id = document.getElementById("current_task_id").innerHTML;
+  _api2.default.assign_task(task_id, current_user_id, assign_user_id);
+  //alert("assign task" + task_id);
+}
+
+});
+
+;require.register("js/cs/task_edit.jsx", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = TaskEdit;
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRedux = require('react-redux');
+
+var _reactstrap = require('reactstrap');
+
+var _reactRouterDom = require('react-router-dom');
+
+var _api = require('../api');
+
+var _api2 = _interopRequireDefault(_api);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function TaskEdit(props) {
+  console.log("task edit");
+  var current_task_title = document.getElementById("current_task_title").innerHTML;
+  var current_task_descrip = document.getElementById("current_task_descrip").innerHTML;
+  return _react2.default.createElement(
+    'div',
+    { style: { padding: "4ex" } },
+    _react2.default.createElement(
+      _reactstrap.FormGroup,
+      null,
+      _react2.default.createElement(
+        _reactstrap.Label,
+        { 'for': 'title' },
+        'Title'
+      ),
+      _react2.default.createElement(_reactstrap.Input, { type: 'textarea', id: 'edit_task_title', defaultValue: current_task_title })
+    ),
+    _react2.default.createElement(
+      _reactstrap.FormGroup,
+      null,
+      _react2.default.createElement(
+        _reactstrap.Label,
+        { 'for': 'desciption' },
+        'Description'
+      ),
+      _react2.default.createElement(_reactstrap.Input, { type: 'textarea', id: 'edit_task_descrip', defaultValue: current_task_descrip })
+    ),
+    _react2.default.createElement(
+      _reactRouterDom.Link,
+      { to: "/tasks_unassigned", 'class': 'btn btn-primary', onClick: function onClick() {
+          return editTask();
+        } },
+      'edit'
+    )
+  );
+}
+
+function editTask() {
+  console.log("create new task");
+  var user_id = document.getElementById("userid").innerHTML;
+  var task_id = document.getElementById("current_task_id").innerHTML;
+  var title = document.getElementById("edit_task_title").value;
+  var descrip = document.getElementById("edit_task_descrip").value;
+  _api2.default.edit_task(user_id, task_id, title, descrip);
+}
+
+});
+
+;require.register("js/cs/task_new.jsx", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = TaskForm;
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRedux = require('react-redux');
+
+var _reactstrap = require('reactstrap');
+
+var _reactRouterDom = require('react-router-dom');
+
+var _api = require('../api');
+
+var _api2 = _interopRequireDefault(_api);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function TaskForm(props) {
+  console.log("task form");
+  return _react2.default.createElement(
+    'div',
+    { style: { padding: "4ex" } },
+    _react2.default.createElement(
+      _reactstrap.FormGroup,
+      null,
+      _react2.default.createElement(
+        _reactstrap.Label,
+        { 'for': 'title' },
+        'Title'
+      ),
+      _react2.default.createElement(_reactstrap.Input, { type: 'textarea', id: 'new_task_title' })
+    ),
+    _react2.default.createElement(
+      _reactstrap.FormGroup,
+      null,
+      _react2.default.createElement(
+        _reactstrap.Label,
+        { 'for': 'desciption' },
+        'Description'
+      ),
+      _react2.default.createElement(_reactstrap.Input, { type: 'textarea', id: 'new_task_descrip' })
+    ),
+    _react2.default.createElement(
+      _reactRouterDom.Link,
+      { to: "/tasks_unassigned", 'class': 'btn btn-primary', onClick: function onClick() {
+          return createNewTask();
+        } },
+      'create'
+    )
+  );
+}
+
+function createNewTask() {
+  console.log("create new task");
+  var user_id = document.getElementById("userid").innerText;
+  var title = document.getElementById("new_task_title").value;
+  var descrip = document.getElementById("new_task_descrip").value;
+  _api2.default.create_new_task(user_id, title, descrip);
+  //alert(user_id + title + descrip);
+}
 
 });
 
@@ -48708,6 +49036,491 @@ function Tasks(props) {
 
 });
 
+;require.register("js/cs/tasks_completed.jsx", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+		value: true
+});
+exports.default = TasksCompleted;
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouterDom = require('react-router-dom');
+
+var _reactstrap = require('reactstrap');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function TasksCompleted(props) {
+		console.log("In Tasks:");
+		console.log(props.tasks);
+		var tasksList = props.tasks.map(function (task) {
+				return _react2.default.createElement(
+						'tr',
+						null,
+						_react2.default.createElement(
+								'td',
+								null,
+								task.id
+						),
+						_react2.default.createElement(
+								'td',
+								null,
+								task.title
+						),
+						_react2.default.createElement(
+								'td',
+								null,
+								task.descrip
+						),
+						_react2.default.createElement(
+								'td',
+								null,
+								task.time
+						),
+						_react2.default.createElement(
+								'td',
+								null,
+								task.isCompleted.toString()
+						),
+						_react2.default.createElement(
+								'td',
+								null,
+								task.user_id_create
+						),
+						_react2.default.createElement(
+								'td',
+								null,
+								task.user_id_assign
+						)
+				);
+		});
+		return _react2.default.createElement(
+				'div',
+				null,
+				_react2.default.createElement(
+						_reactstrap.Alert,
+						{ color: 'primary' },
+						'Tasks completed by this user!'
+				),
+				_react2.default.createElement(
+						_reactstrap.Table,
+						null,
+						_react2.default.createElement(
+								'thead',
+								null,
+								_react2.default.createElement(
+										'tr',
+										null,
+										_react2.default.createElement(
+												'th',
+												null,
+												'Id'
+										),
+										_react2.default.createElement(
+												'th',
+												null,
+												'Title'
+										),
+										_react2.default.createElement(
+												'th',
+												null,
+												'Descrip'
+										),
+										_react2.default.createElement(
+												'th',
+												null,
+												'Time'
+										),
+										_react2.default.createElement(
+												'th',
+												null,
+												'IsCompleted'
+										),
+										_react2.default.createElement(
+												'th',
+												null,
+												'Created'
+										),
+										_react2.default.createElement(
+												'th',
+												null,
+												'Assigned'
+										)
+								)
+						),
+						_react2.default.createElement(
+								'tbody',
+								null,
+								tasksList
+						)
+				)
+		);
+}
+
+});
+
+;require.register("js/cs/tasks_unassigned.jsx", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+		value: true
+});
+exports.default = TasksUnassigned;
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouterDom = require('react-router-dom');
+
+var _reactstrap = require('reactstrap');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function TasksUnassigned(props) {
+		console.log("In Tasks:");
+		console.log(props.tasks);
+		var tasksList = props.tasks.map(function (task) {
+				return _react2.default.createElement(
+						'tr',
+						null,
+						_react2.default.createElement(
+								'td',
+								null,
+								task.id
+						),
+						_react2.default.createElement(
+								'td',
+								null,
+								task.title
+						),
+						_react2.default.createElement(
+								'td',
+								null,
+								task.descrip
+						),
+						_react2.default.createElement(
+								'td',
+								null,
+								task.time
+						),
+						_react2.default.createElement(
+								'td',
+								null,
+								task.isCompleted.toString()
+						),
+						_react2.default.createElement(
+								'td',
+								null,
+								task.user_id_create
+						),
+						_react2.default.createElement(
+								'td',
+								null,
+								task.user_id_assign
+						),
+						_react2.default.createElement(
+								'td',
+								null,
+								_react2.default.createElement(
+										_reactRouterDom.Link,
+										{ to: "/task_edit", 'class': 'btn btn-primary', onClick: function onClick() {
+														return setCurrentTask(task.id, task.title, task.descrip);
+												} },
+										'edit'
+								)
+						),
+						_react2.default.createElement(
+								'td',
+								null,
+								_react2.default.createElement(
+										_reactRouterDom.Link,
+										{ to: "/task_assign", 'class': 'btn btn-success', onClick: function onClick() {
+														return setCurrentTask(task.id, task.title, task.descrip);
+												} },
+										'assign'
+								)
+						)
+				);
+		});
+		return _react2.default.createElement(
+				'div',
+				null,
+				_react2.default.createElement(
+						_reactstrap.Alert,
+						{ color: 'primary' },
+						'Tasks created by this user and have not been assigned!'
+				),
+				_react2.default.createElement(
+						_reactstrap.Table,
+						null,
+						_react2.default.createElement(
+								'thead',
+								null,
+								_react2.default.createElement(
+										'tr',
+										null,
+										_react2.default.createElement(
+												'th',
+												null,
+												'Id'
+										),
+										_react2.default.createElement(
+												'th',
+												null,
+												'Title'
+										),
+										_react2.default.createElement(
+												'th',
+												null,
+												'Descrip'
+										),
+										_react2.default.createElement(
+												'th',
+												null,
+												'Time'
+										),
+										_react2.default.createElement(
+												'th',
+												null,
+												'IsCompleted'
+										),
+										_react2.default.createElement(
+												'th',
+												null,
+												'Created'
+										),
+										_react2.default.createElement(
+												'th',
+												null,
+												'Assigned'
+										),
+										_react2.default.createElement(
+												'th',
+												null,
+												'Edit'
+										),
+										_react2.default.createElement(
+												'th',
+												null,
+												'Assign'
+										)
+								)
+						),
+						_react2.default.createElement(
+								'tbody',
+								null,
+								tasksList
+						)
+				)
+		);
+}
+
+function setCurrentTask(task_id, title, descrip) {
+		document.getElementById("current_task_id").innerHTML = task_id;
+		document.getElementById("current_task_title").innerHTML = title;
+		document.getElementById("current_task_descrip").innerHTML = descrip;
+}
+
+});
+
+;require.register("js/cs/tasks_uncompleted.jsx", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = TasksUncompleted;
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouterDom = require('react-router-dom');
+
+var _reactstrap = require('reactstrap');
+
+var _api = require('../api');
+
+var _api2 = _interopRequireDefault(_api);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function TasksUncompleted(props) {
+  console.log("In Tasks:");
+  console.log(props.tasks);
+  var tasksList = props.tasks.map(function (task) {
+    return _react2.default.createElement(
+      'tr',
+      null,
+      _react2.default.createElement(
+        'td',
+        null,
+        task.id
+      ),
+      _react2.default.createElement(
+        'td',
+        null,
+        task.title
+      ),
+      _react2.default.createElement(
+        'td',
+        null,
+        task.descrip
+      ),
+      _react2.default.createElement(
+        'td',
+        null,
+        task.time
+      ),
+      _react2.default.createElement(
+        'td',
+        null,
+        task.isCompleted.toString()
+      ),
+      _react2.default.createElement(
+        'td',
+        null,
+        task.user_id_create
+      ),
+      _react2.default.createElement(
+        'td',
+        null,
+        task.user_id_assign
+      ),
+      _react2.default.createElement(
+        'td',
+        null,
+        _react2.default.createElement(_reactstrap.Input, { type: 'input', defaultValue: '0', id: task.id })
+      ),
+      _react2.default.createElement(
+        'td',
+        null,
+        _react2.default.createElement(
+          _reactRouterDom.Link,
+          { to: "/tasks_uncompleted", 'class': 'btn btn-primary', onClick: function onClick() {
+              return addTime(task.id);
+            } },
+          'add time'
+        )
+      ),
+      _react2.default.createElement(
+        'td',
+        null,
+        _react2.default.createElement(
+          _reactRouterDom.Link,
+          { to: "/tasks_uncompleted", 'class': 'btn btn-success', onClick: function onClick() {
+              return completeTask(task.id);
+            } },
+          'complete'
+        )
+      )
+    );
+  });
+  return _react2.default.createElement(
+    'div',
+    null,
+    _react2.default.createElement(
+      _reactstrap.Alert,
+      { color: 'primary' },
+      'Tasks assigned to this user and have not been completed!'
+    ),
+    _react2.default.createElement(
+      _reactstrap.Table,
+      null,
+      _react2.default.createElement(
+        'thead',
+        null,
+        _react2.default.createElement(
+          'tr',
+          null,
+          _react2.default.createElement(
+            'th',
+            null,
+            'Id'
+          ),
+          _react2.default.createElement(
+            'th',
+            null,
+            'Title'
+          ),
+          _react2.default.createElement(
+            'th',
+            null,
+            'Descrip'
+          ),
+          _react2.default.createElement(
+            'th',
+            null,
+            'Time'
+          ),
+          _react2.default.createElement(
+            'th',
+            null,
+            'IsCompleted'
+          ),
+          _react2.default.createElement(
+            'th',
+            null,
+            'Created'
+          ),
+          _react2.default.createElement(
+            'th',
+            null,
+            'Assigned'
+          ),
+          _react2.default.createElement(
+            'th',
+            null,
+            'Input Time'
+          ),
+          _react2.default.createElement(
+            'th',
+            null,
+            'Add Time'
+          ),
+          _react2.default.createElement(
+            'th',
+            null,
+            'Complete'
+          )
+        )
+      ),
+      _react2.default.createElement(
+        'tbody',
+        null,
+        tasksList
+      )
+    )
+  );
+}
+
+function completeTask(task_id) {
+  console.log("complete task " + task_id);
+  var user_id = document.getElementById("userid").innerText;
+  //alert(user_id);
+  _api2.default.complete_task(task_id, user_id);
+}
+
+function addTime(task_id) {
+  console.log("add time " + task_id);
+  var user_id = document.getElementById("userid").innerText;
+  var time = document.getElementById(task_id).value;
+  var time_int = Number(time);
+  if (time_int < 0 || time_int % 15 > 0) {
+    alert("time should > 0 and in 15min increments");
+  } else {
+    _api2.default.add_time(task_id, user_id, time);
+  }
+  document.getElementById(task_id).value = "0";
+}
+
+});
+
 ;require.register("js/cs/tasktracker.jsx", function(exports, require, module) {
 'use strict';
 
@@ -48737,6 +49550,30 @@ var _users2 = _interopRequireDefault(_users);
 var _tasks = require('./tasks');
 
 var _tasks2 = _interopRequireDefault(_tasks);
+
+var _task_new = require('./task_new');
+
+var _task_new2 = _interopRequireDefault(_task_new);
+
+var _task_assign = require('./task_assign');
+
+var _task_assign2 = _interopRequireDefault(_task_assign);
+
+var _task_edit = require('./task_edit');
+
+var _task_edit2 = _interopRequireDefault(_task_edit);
+
+var _tasks_unassigned = require('./tasks_unassigned');
+
+var _tasks_unassigned2 = _interopRequireDefault(_tasks_unassigned);
+
+var _tasks_uncompleted = require('./tasks_uncompleted');
+
+var _tasks_uncompleted2 = _interopRequireDefault(_tasks_uncompleted);
+
+var _tasks_completed = require('./tasks_completed');
+
+var _tasks_completed2 = _interopRequireDefault(_tasks_completed);
 
 var _api = require('../api');
 
@@ -48795,6 +49632,31 @@ var Tasktracker = (0, _reactRedux.connect)(function (state) {
               { 'class': 'btn btn-link' },
               'Log out'
             )
+          ),
+          _react2.default.createElement(
+            'p',
+            null,
+            _react2.default.createElement(
+              'p',
+              null,
+              'current task id: ',
+              _react2.default.createElement('span', { id: 'current_task_id' }),
+              ' '
+            ),
+            _react2.default.createElement(
+              'p',
+              null,
+              'current task title: ',
+              _react2.default.createElement('span', { id: 'current_task_title' }),
+              ' '
+            ),
+            _react2.default.createElement(
+              'p',
+              null,
+              'current task descrip: ',
+              _react2.default.createElement('span', { id: 'current_task_descrip' }),
+              ' '
+            )
           )
         )
       ),
@@ -48802,35 +49664,38 @@ var Tasktracker = (0, _reactRedux.connect)(function (state) {
         'div',
         { id: 'buttons' },
         _react2.default.createElement(
-          _reactstrap.Button,
-          { color: 'primary', onClick: function onClick() {
+          _reactRouterDom.Link,
+          { to: "/tasks_unassigned", 'class': 'btn btn-primary', onClick: function onClick() {
               return getUnassinedTasks();
             } },
           'unassined tasks'
         ),
         _react2.default.createElement(
-          _reactstrap.Button,
-          { color: 'warning', onClick: function onClick() {
+          _reactRouterDom.Link,
+          { to: "/tasks_uncompleted", 'class': 'btn btn-warning', onClick: function onClick() {
               return getUncompletedTasks();
             } },
           'uncompleted tasks'
         ),
-        ' ',
         _react2.default.createElement(
-          _reactstrap.Button,
-          { color: 'success', onClick: function onClick() {
+          _reactRouterDom.Link,
+          { to: "/tasks_completed", 'class': 'btn btn-success', onClick: function onClick() {
               return getCompletedTasks();
             } },
           'completed tasks'
         ),
-        ' ',
         _react2.default.createElement(
-          _reactstrap.Button,
-          { color: 'link' },
+          _reactRouterDom.Link,
+          { to: "/users", activeClassName: 'active', 'class': 'btn btn-primary' },
+          'users'
+        ),
+        _react2.default.createElement(
+          _reactRouterDom.Link,
+          { to: "/new_task", activeClassName: 'active' },
           'create new task'
         )
       ),
-      _react2.default.createElement(_reactRouterDom.Route, { path: '/', exact: true, render: function render() {
+      _react2.default.createElement(_reactRouterDom.Route, { path: '/users', exact: true, render: function render() {
           return _react2.default.createElement(
             'div',
             null,
@@ -48842,6 +49707,48 @@ var Tasktracker = (0, _reactRedux.connect)(function (state) {
             'div',
             null,
             _react2.default.createElement(_tasks2.default, { tasks: props.tasks })
+          );
+        } }),
+      _react2.default.createElement(_reactRouterDom.Route, { path: '/tasks_unassigned', exact: true, render: function render() {
+          return _react2.default.createElement(
+            'div',
+            null,
+            _react2.default.createElement(_tasks_unassigned2.default, { tasks: props.tasks })
+          );
+        } }),
+      _react2.default.createElement(_reactRouterDom.Route, { path: '/tasks_uncompleted', exact: true, render: function render() {
+          return _react2.default.createElement(
+            'div',
+            null,
+            _react2.default.createElement(_tasks_uncompleted2.default, { tasks: props.tasks })
+          );
+        } }),
+      _react2.default.createElement(_reactRouterDom.Route, { path: '/tasks_completed', exact: true, render: function render() {
+          return _react2.default.createElement(
+            'div',
+            null,
+            _react2.default.createElement(_tasks_completed2.default, { tasks: props.tasks })
+          );
+        } }),
+      _react2.default.createElement(_reactRouterDom.Route, { path: '/new_task', exact: true, render: function render() {
+          return _react2.default.createElement(
+            'div',
+            null,
+            _react2.default.createElement(_task_new2.default, { form: props.form })
+          );
+        } }),
+      _react2.default.createElement(_reactRouterDom.Route, { path: '/task_assign', exact: true, render: function render() {
+          return _react2.default.createElement(
+            'div',
+            null,
+            _react2.default.createElement(_task_assign2.default, { users: props.users })
+          );
+        } }),
+      _react2.default.createElement(_reactRouterDom.Route, { path: '/task_edit', exact: true, render: function render() {
+          return _react2.default.createElement(
+            'div',
+            null,
+            _react2.default.createElement(_task_edit2.default, null)
           );
         } })
     )
@@ -48865,7 +49772,12 @@ function getCompletedTasks() {
 
 });
 
-;require.register("js/cs/users.jsx", function(exports, require, module) {
+;require.register("js/cs/uncompleted_tasks.jsx", function(exports, require, module) {
+"use strict";
+
+});
+
+require.register("js/cs/users.jsx", function(exports, require, module) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
