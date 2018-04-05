@@ -25,8 +25,6 @@ import api from './api';
 import tasktracker_init from "./cs/tasktracker";
 $(function() {
   console.log("app.js");
-  api.request_assigned_completed_tasks(4);
-  api.request_all_users();
   tasktracker_init(store);
 });
 

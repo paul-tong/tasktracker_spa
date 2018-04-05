@@ -35,12 +35,15 @@ function users(state = [], action) {
 let empty_form = {
   user_id: "",
   body: "",
+  token: "",
 };
 
 function form(state = empty_form, action) {
   switch (action.type) {
     case 'UPDATE_FORM':
       return Object.assign({}, state, action.data);
+    case 'SET_TOKEN':
+      return Object.assign({}, state, action.token);
     default:
       return state;
   }

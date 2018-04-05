@@ -48623,6 +48623,8 @@ var TheServer = function () {
   }, {
     key: "submit_register",
     value: function submit_register(data) {
+      var _this = this;
+
       $.ajax("/api/v1/register", {
         method: "post",
         dataType: "json",
@@ -48630,7 +48632,7 @@ var TheServer = function () {
         data: JSON.stringify(data),
         success: function success(resp) {
           alert("Register success! Now you can log in!");
-          location.reload();
+          _this.request_all_users();
         }
       });
     }
@@ -48677,8 +48679,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // to also remove its path from "config.paths.watched".
 $(function () {
   console.log("app.js");
-  _api2.default.request_assigned_completed_tasks(4);
-  _api2.default.request_all_users();
   (0, _tasktracker2.default)(_store2.default);
 });
 
@@ -50068,7 +50068,8 @@ function users() {
 
 var empty_form = {
   user_id: "",
-  body: ""
+  body: "",
+  token: ""
 };
 
 function form() {
@@ -50078,6 +50079,8 @@ function form() {
   switch (action.type) {
     case 'UPDATE_FORM':
       return Object.assign({}, state, action.data);
+    case 'SET_TOKEN':
+      return Object.assign({}, state, action.token);
     default:
       return state;
   }

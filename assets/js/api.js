@@ -173,7 +173,7 @@ class TheServer {
       data: JSON.stringify(data),
       success: (resp) => {
         alert("Register success! Now you can log in!");
-        location.reload();
+        this.request_all_users();
       },
     });
   }
